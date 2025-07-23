@@ -79,7 +79,8 @@
                                 </a-select-option>
                             </a-select>
                         </div>
-                        <span class="text-danger col-12 col-sm-9" v-if="errors.department">{{ errors.department[0] }}</span>
+                        <span class="text-danger col-12 col-sm-9" v-if="errors.department">{{ errors.department[0]
+                        }}</span>
 
                     </div>
                     <div class="row mb-3 justify-content-end">
@@ -118,7 +119,8 @@
                             <a-input-password v-model:value="password_confirm" placeholder="input password"
                                 autocomplete="new-password" />
                         </div>
-                        <span class="text-danger col-12 col-sm-9" v-if="errors.password_confirm">{{ errors.password_confirm[0] }}</span>
+                        <span class="text-danger col-12 col-sm-9" v-if="errors.password_confirm">{{
+                            errors.password_confirm[0] }}</span>
                     </div>
 
                     <div class="row d-flex justify-content-end">
@@ -139,8 +141,8 @@
     </a-card>
 </template>
 <script setup>
-import axios from 'axios';
 import { ref } from 'vue';
+import { notification } from 'ant-design-vue';
 const avatarFile = ref(null);
 const avatarPreview = ref('/images/avatar/avatar-default.jpg');
 const department = ref(undefined);
@@ -154,6 +156,15 @@ const password = ref('');
 const password_confirm = ref('');
 
 const errors = ref({});
+
+const openNotification = () => {
+    notification.open({
+        type: 'success',
+        message: 'Thông báo',
+        description:
+            'Thêm tài khoản thành công',
+    });
+};
 
 axios.get('http://127.0.0.1:8000/api/users/create')
     .then((response) => {
@@ -197,6 +208,7 @@ const onSubmit = () => {
     }
     axios.post('http://127.0.0.1:8000/api/users', formData)
         .then((response) => {
+            openNotification();
             console.log(response);
         })
         .catch((err) => {
