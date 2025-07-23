@@ -131,7 +131,52 @@
     </a-card>
 </template>
 <script setup>
+import { ref } from 'vue';
+const avatarFile = ref(null);
+const avatarPreview = ref('/images/avatar/avatar-default.jpg');
+const department = ref(undefined);
+const status = ref(undefined);
+const datas = ref({});
 
+const username = ref('');
+const name = ref('');
+const email = ref('');
+const password = ref('');
+const password_confirm = ref('');
+
+const errors = ref({});
+
+
+
+axios.get('http://127.0.0.1:8000/api/users/create')
+    .then((response) => {
+        datas.value = response.data;
+    }).catch((err) => {
+        console.log(err);
+    });
+
+const beforeUpload = (file) => {
+    const isImage = file.type.startsWith('image/')
+    const isLt2M = file.size / 1024 / 1024 < 2
+
+    if (!isImage) {
+        alert('Chỉ cho phép tải ảnh.');
+        return false;
+    }
+
+    if (!isLt2M) {
+        alert('Ảnh phải nhỏ hơn 2MB.');
+        return false;
+    }
+
+    avatarFile.value = file;
+    avatarPreview.value = URL.createObjectURL(file);
+    return false;
+}
+
+const onSubmit = () => {
+   
+}
 
 
 </script>

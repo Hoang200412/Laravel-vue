@@ -2,17 +2,21 @@
     <div class="container-fluid">
         <div class="row align-items-center bg-success-subtle p-3">
             <div class="col-1 d-flex d-sm-none d-flex d-sm-none">
-                <span class="text-center" @click="showDrawer()">X</span>
+                <span class="text-center" @click="showDrawer()">
+                    <i class="fa-solid fa-bars"></i>
+                </span>
             </div>
             <div class="col-10 col-sm-9 justify-content-center d-flex d-flex justify-content-sm-start">
-                <span class="d-flex d-sm-none">Header</span>
-                <span class="d-none d-sm-flex">Trang quan tri</span>
+                <span class="d-flex d-sm-none">Trang chu</span>
+                <span class="d-none d-sm-flex">{{ title }}</span>
             </div>
             <div class="col-sm-3 justify-content-end d-sm-flex d-none">
-                <span>Admin</span>
+                <span>{{ namepages }}</span>
             </div>
             <div class="col-1 d-flex d-sm-none d-flex d-sm-none">
-                <span class="text-center" @click="showDrawer_admin()">X</span>
+                <span class="text-center" @click="showDrawer_admin()">
+                    <i class="fa-solid fa-user"></i>
+                </span>
             </div>
         </div>
     </div>
@@ -30,7 +34,6 @@
 </template>
 
 <script setup>
-
     import { ref } from 'vue';
     import theMenu from './theMenu.vue';
     const open = ref(false);
@@ -41,5 +44,17 @@
     const showDrawer_admin = () => {
         open_profile.value = true;
     };
+
+    defineProps({
+        title: {
+            type: String,
+            default: 'Trang quản trị'
+        },
+        namepages: {
+            type: String,
+            default: 'Admin'
+        }
+
+    });
 
 </script>

@@ -1,16 +1,16 @@
 <template>
-    <theHeader />
+    <theHeaderUser />
     <div class="container-fluid">
         <div class="row">
             <div class="col-sm-3 d-none d-sm-flex">
                 <a-list bordered style="width: 100%;">
                     <template #header>
-                    <div class="text-center">Bang dieu khien</div>
+                        <div class="text-center">Bang dieu khien</div>
                     </template>
-                    <TheMenu/>
+                    <TheMenuUser />
                 </a-list>
             </div>
-            <div class="col-sm-9 col-12">
+            <div class="col-sm-9 col-12 bg-light">
                 <router-view></router-view>
             </div>
         </div>
@@ -18,7 +18,6 @@
 </template>
 
 <script setup>
-    import theHeader from '../components/theHeader.vue';
-    import TheMenu from '../components/theMenu.vue';
-
+    import theHeaderUser from '../components/theHeaderUser.vue';
+    import TheMenuUser from '../components/theMenuUser.vue';
 </script>
