@@ -2,16 +2,16 @@
     <a-card title="Tao moi tai khoan">
         <form method="POST" @submit.prevent="onSubmit">
             <div class="row">
-                <div class="col-12 col-sm-4">
+                <div class="col-12 col-sm-4 text-center">
                     <div class="row text-center">
-                        <div class="col-12 mb-3">
+                        <span class="text-danger text-center" v-if="errors.avatar">{{ errors.avatar[0] }}</span>
+                        <div class="col-12 mb-3 mt-2">
                             <a-avatar shape="square" :size="150">
                                 <template #icon>
                                     <img :src="avatarPreview" alt="">
                                 </template>
                             </a-avatar>
                         </div>
-
                         <div class="col-12">
                             <a-upload :showUploadList="false" :beforeUpload="beforeUpload">
                                 <a-button type="primary">
@@ -26,7 +26,7 @@
                     <div class="row mb-3 justify-content-end">
                         <div class="col-12 col-sm-3">
                             <label for="">
-                                <span>*</span>
+                                <span :class="{ 'text-danger': errors.status_id }">*</span>
                                 <span>Tình trạng</span>
                             </label>
                         </div>
@@ -37,7 +37,7 @@
                                 </a-select-option>
                             </a-select>
                         </div>
-
+                        <span class="text-danger col-12 col-sm-9" v-if="errors.status_id">{{ errors.status_id[0] }}</span>
                     </div>
                     <div class="row mb-3 justify-content-end">
                         <div class="col-12 col-sm-3">
@@ -67,7 +67,7 @@
                     <div class="row mb-3 justify-content-end">
                         <div class="col-12 col-sm-3">
                             <label for="">
-                                <span :class="{ 'text-danger': errors.department }">*</span>
+                                <span :class="{ 'text-danger': errors.department_id }">*</span>
                                 <span>Phòng ban</span>
                             </label>
                         </div>
@@ -79,8 +79,7 @@
                                 </a-select-option>
                             </a-select>
                         </div>
-                        <span class="text-danger col-12 col-sm-9" v-if="errors.department">{{ errors.department[0]
-                        }}</span>
+                        <span class="text-danger col-12 col-sm-9" v-if="errors.department_id">{{ errors.department_id[0] }}</span>
 
                     </div>
                     <div class="row mb-3 justify-content-end">
@@ -122,6 +121,13 @@
                         <span class="text-danger col-12 col-sm-9" v-if="errors.password_confirm">{{
                             errors.password_confirm[0] }}</span>
                     </div>
+                    <div class="row mb-3 justify-content-end">
+                        <a-radio-group v-model:value="role">
+                            <a-radio :value="'admin'">Admin</a-radio>
+                            <a-radio :value="'user'">User</a-radio>
+                        </a-radio-group>
+                        <span class="text-danger col-12 col-sm-9" v-if="errors.role">{{ errors.role[0] }}</span>
+                    </div>
 
                     <div class="row d-flex justify-content-end">
                         <div class="col-12 col-sm-2 my-2">
@@ -132,7 +138,6 @@
                         <div class="col-12 col-sm-2 my-2">
                             <a-button type="primary" html-type="submit" style="width: 100%;">Lưu</a-button>
                         </div>
-
                     </div>
                 </div>
             </div>
@@ -142,11 +147,13 @@
 </template>
 <script setup>
 import { ref } from 'vue';
-import { notification } from 'ant-design-vue';
+import { authStore } from '../../../stores/auth';
+import { notifySuccess } from '../../../utils/notify';
+const auth = authStore();
 const avatarFile = ref(null);
 const avatarPreview = ref('/images/avatar/avatar-default.jpg');
-const department = ref(undefined);
-const status = ref(undefined);
+const department = ref([]);
+const status = ref([]);
 const datas = ref({});
 
 const username = ref('');
@@ -154,22 +161,21 @@ const name = ref('');
 const email = ref('');
 const password = ref('');
 const password_confirm = ref('');
+const role = ref('user');
 
 const errors = ref({});
 
-const openNotification = () => {
-    notification.open({
-        type: 'success',
-        message: 'Thông báo',
-        description:
-            'Thêm tài khoản thành công',
-    });
-};
 
-axios.get('http://127.0.0.1:8000/api/users/create')
+
+axios.get('http://127.0.0.1:8000/api/users/create', {
+    headers: {
+        'Authorization': `Bearer ${auth.token}`,
+    },
+})
     .then((response) => {
         datas.value = response.data;
-    }).catch((err) => {
+    })
+    .catch((err) => {
         console.log(err);
     });
 
@@ -202,13 +208,19 @@ const onSubmit = () => {
     formData.append('password_confirm', password_confirm.value);
     formData.append('department_id', department.value);
     formData.append('status_id', status.value);
-
+    formData.append('role', role.value);
     if (avatarFile.value) {
         formData.append('avatar', avatarFile.value);
     }
-    axios.post('http://127.0.0.1:8000/api/users', formData)
+    console.log(department.value);
+    axios.post('http://127.0.0.1:8000/api/users', formData, {
+        headers: {
+            'Content-Type': 'multipart/form-data',
+            'Authorization': `Bearer ${auth.token}`,
+        },
+    })
         .then((response) => {
-            openNotification();
+            notifySuccess('Thêm tài khoản thành công');
             console.log(response);
         })
         .catch((err) => {
@@ -217,7 +229,6 @@ const onSubmit = () => {
             } else {
                 console.error(err);
             }
-
         });
 }
 

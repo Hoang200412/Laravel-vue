@@ -9,28 +9,33 @@
                 </a-button>
             </router-link>
         </div>
-        <a-table :dataSource="users" :columns="columns" :scroll="{ x: 600, y: 1000 }">
+        <a-table :dataSource="users" :columns="columns" :scroll="{ x: 1200, y: 600 }">
             <template #bodyCell="{ column, record, index }">
                 <template v-if="column.key === 'index'">
                     <span>{{ index + 1 }}</span>
                 </template>
                 <template v-if="column.key === 'avatar'">
                     <div class="img">
-                        <img :src="`/storage/${record.avata}`" alt="avatar"
-                            style="width: 40px; height: auto;">
+                        <img :src="`/storage/${record.avatar}`" alt="avatar" style="width: 40px; height: auto;">
                     </div>
                 </template>
                 <template v-if="column.key === 'action'">
                     <div class="d-flex justify-content-around">
                         <a-button type="primary" size="small">
-                            <router-link :to="{name: 'edit-user', params: {id: record.id}}">
-                            <i class="fa-solid fa-pen-to-square"></i>
+                            <router-link :to="{ name: 'edit-user', params: { id: record.id } }">
+                                <i class="fa-solid fa-pen-to-square"></i>
                             </router-link>
                         </a-button>
-                        <a-button type="primary" danger size="small" @click="deleteUser(record.id)">
+                        <a-button type="primary" danger size="small" @click="showDeleteConfirm(record.id)">
                             <i class="fa-solid fa-trash"></i>
                         </a-button>
                     </div>
+                </template>
+                <template v-if="column.key === 'status'">
+                    <span class="badge"
+                        :class="{ 'bg-info': record.status_id === 1, 'bg-warning': record.status_id !== 1 }">
+                        {{ record.status }}
+                    </span>
                 </template>
             </template>
         </a-table>
@@ -38,25 +43,51 @@
 </template>
 <script setup>
 import { onMounted, reactive, ref } from 'vue';
+import { authStore } from '../../../stores/auth';
+import { Modal } from 'ant-design-vue';
+const auth = authStore();
 
 const users = ref([]);
 const renderUser = () => {
-    axios.get('http://127.0.0.1:8000/api/users')
+    axios.get('http://127.0.0.1:8000/api/users', {
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${auth.token}`,
+        }
+    })
         .then(function (response) {
             users.value = response.data;
         })
         .catch(function (error) {
             console.log(error);
         })
-        .finally(function () {
-        });
 }
 onMounted(() => {
     renderUser();
 })
+
+const showDeleteConfirm = (id) => {
+    Modal.confirm({
+        title: 'Xác nhận xóa',
+        content: 'Bạn có chắc chắn muốn xóa người dùng này?',
+        okText: 'Có',
+        okType: 'danger',
+        cancelText: 'Không',
+        onOk() {
+            deleteUser(id);
+        },
+        onCancel() {
+            return;
+        },
+    });
+};
+
 const deleteUser = (id) => {
-    alert("Bạn có chắc chắn muốn xóa người dùng này?");
-    axios.delete(`http://127.0.0.1:8000/api/users/${id}`)
+    axios.delete(`http://127.0.0.1:8000/api/users/${id}`, {
+        headers: {
+            'Authorization': `Bearer ${auth.token}`,
+        }
+    })
         .then(function (response) {
             console.log(response);
             renderUser();
@@ -76,7 +107,7 @@ const columns = reactive([
     },
     {
         title: 'Avatar',
-        dataIndex: 'avata',
+        dataIndex: 'avatar',
         key: 'avatar',
         width: 100,
     },
@@ -96,10 +127,26 @@ const columns = reactive([
         key: 'address',
     },
     {
+        title: 'Vai trò',
+        dataIndex: 'role',
+        key: 'role',
+    },
+    {
+        title: 'Phòng ban',
+        dataIndex: 'department',
+        key: 'department',
+    },
+    {
+        title: 'Trạng thái',
+        dataIndex: 'status',
+        key: 'status',
+    },
+    {
         title: 'Hành động',
         dataIndex: 'action',
         key: 'action',
         width: 120,
+        fixed: 'right',
     }
 ]);
 

@@ -7,21 +7,29 @@ use Illuminate\Http\Request;
 use App\Http\Requests\UserRequest;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Routing\Controllers\HasMiddleware;
 
-class UserController extends Controller
+class UserController extends Controller implements HasMiddleware
 {
-    /**
-     * Display a listing of the resource.
-     */
+ 
+    public static function middleware()
+    {
+        return [
+            new Middleware('auth:sanctum'),
+            new Middleware('IsAdmin'),
+        ];
+    }
+
     public function index()
     {
-        $users = User::query()->get();
+        $users = DB::table('users')
+        ->join('departments', 'users.department_id', '=', 'departments.id')
+        ->join('users_status', 'users.status_id', '=', 'users_status.id')
+        ->select('users.*', 'departments.name as department', 'users_status.name as status')->get();
         return response()->json($users, 200);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
 
     public function create() {
         $departments = DB::table('departments')->select('id', 'name as department')->get();
@@ -46,7 +54,8 @@ class UserController extends Controller
                     'password'      => $request->password,
                     'department_id' => $request->department_id,
                     'status_id'     => $request->status_id,
-                    'avata'         => Storage::disk('public')->put('avatar', $request->file('avatar')),
+                    'avatar'        => Storage::disk('public')->put('avatar', $request->file('avatar')),
+                    'role'          => $request->role,  
                 ]);
 
             });
@@ -61,36 +70,58 @@ class UserController extends Controller
         }
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function show(User $user)
     {
-        //
+        return response()->json($user, 200);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function edit(User $user)
     {
-        //
+        return response()->json($user, 200);
     }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
+   
+    public function update(UserRequest $request, User $user)
     {
         try {
-            DB::transaction(function () use ($id) {
-                $user = User::findOrFail($id);
-                if(Storage::disk('public')->exists($user->avata)) {
-                    Storage::disk('public')->delete($user->avata);
+            DB::transaction(function () use ($request, $user) {
+                $data = [
+                    'username'      => $request->username,
+                    'name'          => $request->name,
+                    'email'         => $request->email,
+                    'password'      => $request->password,
+                    'department_id' => $request->department_id,
+                    'status_id'     => $request->status_id,
+                    'role'          => $request->role,
+                ];
+                if ($request->hasFile('avatar')) {
+                    if(Storage::disk('public')->exists($user->avatar)) {
+                        Storage::disk('public')->delete($user->avatar);
+                        $data['avatar'] = Storage::disk('public')->put('avatar', $request->file('avatar'));
+                    }else {
+                        $data['avatar'] = Storage::disk('public')->put('avatar', $request->file('avatar'));
+                    }
+                }
+                $user->update($data);
+            });
+
+            return response()->json('Cập nhật thành công', 200);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'message'   =>  'Có lỗi xảy ra',
+                'error'     =>  $th->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function destroy(User $user)
+    {
+        try {
+            DB::transaction(function () use ($user) {
+                if(Storage::disk('public')->exists($user->avatar)) {
+                    Storage::disk('public')->delete($user->avatar);
                 }
                 $user->delete();
             });
-
             return response()->json('Xóa thành công', 200);
         } catch (\Throwable $th) {
             return response()->json([

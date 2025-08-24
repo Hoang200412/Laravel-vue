@@ -1,31 +1,29 @@
 <template>
-    <div data-mdb-input-init class="form-outline mb-4">
-        <label class="form-label" :for="idInput">{{ nameLabel }}</label>
-        <input :type="typeInput" :name="nameInput" :id="idInput" class="form-control form-control-lg"
+    <div data-mdb-input-init class="form-outline mb-3">
+        <label class="form-label" :for="id">{{ label }}</label>
+        <input :type="type" :name="name" :id="id" class="form-control" :class="size"
             :autocomplete="autocomplete" :placeholder="placeholder" :value="value"
-            @input="$emit('update:value', $event.target.value)" />
+            @input="$emit('update:value', $event.target.value)" :disabled="disabled"/>
         <span class="text-danger">{{ errorMessage }}</span>
     </div>
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import { errorMessages } from 'vue/compiler-sfc';
 
     defineProps({
-        nameInput: {
+        name: {
             type: String,
             default: ''
         },
-        idInput: {
+        id: {
             type: String,
             default: ''
         },
-        typeInput: {
+        type: {
             type: String,
             default: 'text'
         },
-        nameLabel: {
+        label: {
             type: String,
             default: ''
         },
@@ -38,13 +36,21 @@ import { errorMessages } from 'vue/compiler-sfc';
             default: 'nhập thông tin'
         },
         value: {
-            type: String,
+            type: [String, Number],
             default: ''
         },
         errorMessage: {
             type: String,
             default: ''
+        },
+        size: {
+            type: String,
+            default: 'form-control-lg' // 'sm', 'md', 'lg'
+        },
+        disabled: {
+            type: Boolean,
+            default: false
         }
-       
+
     });
 </script>

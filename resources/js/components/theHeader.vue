@@ -11,7 +11,7 @@
                 <span class="d-none d-sm-flex">{{ title }}</span>
             </div>
             <div class="col-sm-3 justify-content-end d-sm-flex d-none">
-                <span>{{ namepages }}</span>
+                <a class="text-decoration-none text-dark btn" @click="showDrawer_admin()">{{ namepages }}</a>
             </div>
             <div class="col-1 d-flex d-sm-none d-flex d-sm-none">
                 <span class="text-center" @click="showDrawer_admin()">
@@ -29,6 +29,7 @@
         <p>Some contents...</p>
         <p>Some contents...</p>
         <p>Some contents...</p>
+        <button class="btn btn-danger" @click="logout">Logout</button>
     </a-drawer>
 
 </template>
@@ -36,6 +37,11 @@
 <script setup>
     import { ref } from 'vue';
     import theMenu from './theMenu.vue';
+    import { authStore } from '../stores/auth';
+    import { useRouter } from 'vue-router';
+
+    const router = useRouter();
+    const auth = authStore();
     const open = ref(false);
     const open_profile = ref(false);
     const showDrawer = () => {
@@ -56,5 +62,9 @@
         }
 
     });
+    const logout = async () => {
+        await auth.logout('/api/logout');
+        router.push({ name: 'login' });
+    };
 
 </script>

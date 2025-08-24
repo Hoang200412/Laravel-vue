@@ -13,6 +13,18 @@ class User extends Authenticatable
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable, HasApiTokens;
 
+    const ROLE_ADMIN = 'admin';
+    const ROLE_USER = 'user';
+
+    public function isAdmin(): bool
+    {
+        return $this->role === self::ROLE_ADMIN;
+    }
+
+    public function isUser(): bool
+    {
+        return $this->role === self::ROLE_USER;
+    }
     /**
      * The attributes that are mass assignable.
      *
@@ -25,7 +37,8 @@ class User extends Authenticatable
         'password',
         'department_id',
         'status_id',
-        'avata'
+        'avatar',
+        'role'
     ];
 
     public function proofs()

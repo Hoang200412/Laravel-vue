@@ -13,11 +13,13 @@ class AuthController extends Controller
             'username' => 'required',
             'password' => 'required|min:6',
         ]);
-
+        
         $user = User::where('username', $request->username)->first();
 
         if (!$user || !password_verify($request->password, $user->password)) {
-            return response()->json(['error' => ['Mật khẩu hoặc tên đăng nhập sai'] ], 401);
+            return response()->json(['errors' => [
+                'password' => ['Tên đăng nhập hoặc mật khẩu không đúng'],
+            ]], 401);
         }
 
         $token = $user->createToken($user->username);

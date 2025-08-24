@@ -7,13 +7,15 @@
                         class="img-fluid" alt="Phone image">
                 </div>
                 <div class="col-md-7 col-lg-5 col-xl-5 offset-xl-1">
-                    <form action="" method="POST" @submit.prevent="login">
+                    <form action="" method="POST" @submit.prevent="handleLogin">
 
-                        <form-input nameInput="username" idInput="username" nameLabel="Tên đăng nhập" 
-                            v-model:value="username"  :error-message="errorMessages.username ? errorMessages.username[0] : ''"/>
+                        <form-input name="username" id="username" label="Tên đăng nhập"
+                            v-model:value="formData.username"
+                            :error-message="auth.errors.username ? auth.errors.username[0] : ''" />
 
-                        <form-input nameInput="password" idInput="password" nameLabel="Mật khẩu" typeInput="password" 
-                            v-model:value="password" :error-message="errorMessages.password ? errorMessages.password[0] : ''"/>
+                        <form-input name="password" id="password" label="Mật khẩu" type="password"
+                            v-model:value="formData.password"
+                            :error-message="auth.errors.password ? auth.errors.password[0] : ''" />
 
                         <div class="d-flex justify-content-between align-items-center mb-4">
                             <div class="form-check">
@@ -51,33 +53,28 @@
 <script setup>
 import formInput from '../../components/formInput.vue';
 import buttonSizeXl from '../../components/buttonSizeXl.vue';
-import { ref } from 'vue';
-import axios from 'axios';
+import { reactive, ref } from 'vue';
+import { authStore } from '../../stores/auth';
 import { useRouter } from 'vue-router';
-
+const formData = reactive({
+    username: '',
+    password: ''
+});
 const router = useRouter();
-const username = ref('');
-const password = ref('');
+const { data, login } = authStore();
+const auth = authStore();
+const handleLogin = async () => {
+    const success = await auth.login('/api/login', formData);
 
-const errorMessages = ref({});
-const login = () => {
-    errorMessages.value = {};
-    const formData = new FormData();
-    formData.append('username', username.value);
-    formData.append('password', password.value);
-    axios.post('http://127.0.0.1:8000/api/login', formData)
-    .then(response => {
-        console.log('Login successful:', response.data);
-        router.push({name:'user-home'});
-        localStorage.setItem('token', response.data.token);
-    })
-    .catch(error => {
-        if(error.status == 401) {
-            errorMessages.value.password = error.response.data.error;
-        } else {
-            errorMessages.value = error.response.data.errors;
+    if (success) {
+        if (auth.isAdmin) {
+            router.push({ name: 'admin' });
+        } else if (auth.isUser) {
+            router.push({ name: 'nckh' });
         }
-    });
+    } else {
+        console.error("Login failed");
+    }
 };
 
 </script>

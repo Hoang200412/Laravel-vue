@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 class Proof extends Model
@@ -17,6 +18,7 @@ class Proof extends Model
         'submitted_at',
         'approved_at'
     ];
+
     
     public function user()
     {
