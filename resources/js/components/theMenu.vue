@@ -2,8 +2,8 @@
 
     <a-menu v-model:selectedKeys="selectedKeys" mode="inline" style="width: 100%">
 
-        <a-menu-item key="admin-roles">
-            <router-link :to="{ name: 'admin-roles' }" class="text-decoration-none">Vai trò</router-link>
+        <a-menu-item key="admin-proofs">
+            <router-link :to="{ name: 'admin-proofs' }" class="text-decoration-none">Bài nghiên cứu</router-link>
         </a-menu-item>
 
         <a-menu-item key="admin-users">

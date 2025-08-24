@@ -21,24 +21,28 @@ class UserRequest extends FormRequest
      */
     public function rules(): array
     {
+        $id = $this->route('user')->id ?? null;
+        
         return [
-            'username'              => 'required|unique:users,username',
+            'username'              => 'required|unique:users,username,'.($id ? $id : ''),
             'name'                  => 'required',
             'email'                 => 'required|email',
             'password'              => 'required',
             'password_confirm'      => 'required|same:password',
             'department_id'         => 'required',
-            'status_id'             => 'required'
+            'status_id'             => 'required',
+            'avatar'                => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'role'                  => 'required',
         ];
     }
 
     public function messages(): array
     {
         return [
-            '*.required'            => ':attribute không được để trống',
-            'username.unique'       => 'Tên đăng nhập đã tồn tại',
-            'email.email'           => 'Email không đúng định dạng',
-            'password_confirm.same' => 'Mật khẩu nhập lại không khớp',
+            '*.required'                => 'Vui lòng nhập trường này',
+            'username.unique'           => 'Tên đăng nhập đã tồn tại',
+            'email.email'               => 'Email không đúng định dạng',
+            'password_confirm.same'     => 'Mật khẩu nhập lại không khớp',
         ];
     }
     
