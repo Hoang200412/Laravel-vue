@@ -1,12 +1,11 @@
-import axios from "axios";
 import { defineStore } from "pinia";
+import axios from "axios";
 
 export const authStore = defineStore("auth", {
     state: () => {
         return {
             token: localStorage.getItem('token') || null,
             role: localStorage.getItem('role') || null,
-            data: null,
             errors: {},
             loading: false
         }
@@ -24,7 +23,6 @@ export const authStore = defineStore("auth", {
 
                 this.token = response.data.token;
                 this.role = response.data.user.role;
-                this.data = response.data.user;
 
                 localStorage.setItem("token", this.token);
                 localStorage.setItem("role", this.role);
@@ -43,7 +41,7 @@ export const authStore = defineStore("auth", {
             this.loading = true;
             this.errors = {};
             try {
-                await axios.post(url,{},
+                await axios.post(url, {},
                     {
                         headers: {
                             "Authorization": `Bearer ${this.token}`,
@@ -55,7 +53,6 @@ export const authStore = defineStore("auth", {
             } finally {
                 this.token = null;
                 this.role = null;
-                this.data = null;
                 this.errors = {};
 
                 localStorage.removeItem("token");
@@ -63,6 +60,20 @@ export const authStore = defineStore("auth", {
 
                 delete axios.defaults.headers.common["Authorization"];
                 this.loading = false;
+            }
+        },
+
+        async getProfile() {
+            try {
+                const response = await axios.get('/api/profile', {
+                    headers: {
+                        "Authorization": `Bearer ${this.token}`,
+                    },
+                });
+                return response.data;
+            } catch (error) {
+                this.errors = error.response?.data?.message || "Failed to fetch user data";
+                return null;
             }
         },
 

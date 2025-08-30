@@ -1,23 +1,23 @@
 import api from "./api";
 
 export const get =  () => {
-    return api.get("api/proof");
+    return api.get("api/proofs");
 }
 
 export const create  = () => {
-    return api.get("api/proof/create");
+    return api.get("api/proofs/create");
 }
 
 export const store = (data) => {
-    return api.post("api/proof", data);
+    return api.post("api/proofs", data);
 }
 
 export const edit = (id) => {
-    return api.get(`api/proof/${id}/edit`);
+    return api.get(`api/proofs/${id}/edit`);
 }
 
 export const update = (data, id) => {
-    return api.post(`api/proof/${id}`, data, {
+    return api.post(`api/proofs/${id}`, data, {
         headers: {
             'X-HTTP-Method-Override': 'PUT'
         }
@@ -25,7 +25,7 @@ export const update = (data, id) => {
 }
 
 export const destroy = (id) => {
-    return api.delete(`api/proof/${id}`);
+    return api.delete(`api/proofs/${id}`);
 }
 
 export const getSignedUrl = (id) => {
@@ -33,9 +33,9 @@ export const getSignedUrl = (id) => {
 };
 
 export const getDashboardStats = () => {
-    return api.get("api/proofs/dashboard-stats");
+    return api.get("api/proof/dashboard-stats");
 }
 
 export const getTopAuthors = () => {
-    return api.get("api/proofs/top-authors");
+    return api.get("api/proof/top-authors");
 }

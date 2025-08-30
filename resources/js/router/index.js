@@ -31,6 +31,12 @@ const admin = [
                 meta: { auth: true, role: ["admin"] },
             },
             {
+                path: "proofs/:id", 
+                name: "proof-show",
+                component: () => import("../pages/admin/proofs/show.vue"),
+                meta: { auth: true, role: ["admin"] },
+            },
+            {
                 path: "users/:id/edit",
                 name: "edit-user",
                 component: () => import("../pages/admin/users/edit.vue"),
@@ -107,18 +113,21 @@ router.beforeEach((to, from, next) => {
     const role = localStorage.getItem('role');
 
     if(to.name == 'nckh') {
-        next({ name: 'user-home' });
+        return next({ name: 'user-home' });
+    }
+    if (to.name == 'admin') {
+        return next({ name: 'admin-proofs' });
     }
 
     if (to.meta.auth && !token) {
-        next({ name: 'login' });
+        return next({ name: 'login' });
     }else if(to.meta.auth && !to.meta.role.includes(role)) {
-        next({ name: '403' });
+        return next({ name: '403' });
     }else if(token && to.name === 'login') {
-        next({ name: 'nckh' });
-    }else {
-        next();
+        return next({ name: 'nckh' });
     }
+    
+    return next();
 })
 
 export default router;

@@ -70,6 +70,11 @@ class UserController extends Controller implements HasMiddleware
         }
     }
 
+    public function getProfile(Request $request) {
+        $user = $request->user();
+        return response()->json($user, 200);
+    }
+
     public function show(User $user)
     {
         return response()->json($user, 200);

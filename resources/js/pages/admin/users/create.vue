@@ -146,9 +146,10 @@
     </a-card>
 </template>
 <script setup>
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import { authStore } from '../../../stores/auth';
 import { notifySuccess } from '../../../utils/notify';
+import { create, store } from '../../../services/userService';
 const auth = authStore();
 const avatarFile = ref(null);
 const avatarPreview = ref('/images/avatar/avatar-default.jpg');
@@ -165,34 +166,30 @@ const role = ref('user');
 
 const errors = ref({});
 
-
-
-axios.get('http://127.0.0.1:8000/api/users/create', {
-    headers: {
-        'Authorization': `Bearer ${auth.token}`,
-    },
-})
-    .then((response) => {
-        datas.value = response.data;
-    })
-    .catch((err) => {
-        console.log(err);
-    });
+onMounted(() => {
+    fetchData();
+});
+const fetchData = () => {
+    create()
+        .then((response) => {
+            datas.value = response.data;
+        })
+        .catch((err) => {
+            console.log(err);
+        });
+}
 
 const beforeUpload = (file) => {
     const isImage = file.type.startsWith('image/')
     const isLt2M = file.size / 1024 / 1024 < 2
-
     if (!isImage) {
         alert('Chỉ cho phép tải ảnh.');
         return false;
     }
-
     if (!isLt2M) {
         alert('Ảnh phải nhỏ hơn 2MB.');
         return false;
     }
-
     avatarFile.value = file;
     avatarPreview.value = URL.createObjectURL(file);
     return false;
@@ -213,15 +210,9 @@ const onSubmit = () => {
         formData.append('avatar', avatarFile.value);
     }
     console.log(department.value);
-    axios.post('http://127.0.0.1:8000/api/users', formData, {
-        headers: {
-            'Content-Type': 'multipart/form-data',
-            'Authorization': `Bearer ${auth.token}`,
-        },
-    })
-        .then((response) => {
+    store(formData)
+        .then(() => {
             notifySuccess('Thêm tài khoản thành công');
-            console.log(response);
         })
         .catch((err) => {
             if (err.response && err.response.data && err.response.data.errors) {

@@ -29,6 +29,10 @@
                     </span>
                 </template>
 
+                <template v-if="column.dataIndex === 'created_at'">
+                    {{ formatDate(record.created_at) }}
+                </template>
+
                 <template v-if="column.key === 'action'">
                     <div class="d-flex justify-content-around">
                         <a-button type="primary" size="small"
@@ -49,6 +53,7 @@
 import { ref, onMounted } from 'vue';
 import { destroy, get, getSignedUrl } from '../../../services/proofService';
 import { useRouter } from 'vue-router';
+import { formatDate } from '../../../utils/format';
 const proofs = ref([]);
 const fileUrl = ref('');
 const router = useRouter();

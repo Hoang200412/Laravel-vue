@@ -39,23 +39,17 @@
     <a-drawer v-model:open="open" title="Danh muc" placement="left">
         <theMenuUser />
     </a-drawer>
-
     <a-drawer v-model:open="open_profile" title="" placement="right">
-        <p>Some contents...</p>
-        <p>Some contents...</p>
-        <p>Some contents...</p>
-        <button class="btn btn-danger" @click="logout">Logout</button>
+        <profile />
     </a-drawer>
-
 </template>
 
 <script setup>
 import { ref } from 'vue';
 import theMenuUser from './theMenuUser.vue';
-import { authStore } from '../stores/auth';
 import { useRouter } from 'vue-router';
+import profile from './profile.vue';
 const router = useRouter();
-const auth = authStore();
 
 const open = ref(false);
 const open_profile = ref(false);
@@ -66,10 +60,6 @@ const showDrawer_user = () => {
     open_profile.value = true;
 };
 
-const logout = async () => {
-  await auth.logout('/api/logout');
-  router.push({ name: 'login' });
-};
 
 
 </script>
