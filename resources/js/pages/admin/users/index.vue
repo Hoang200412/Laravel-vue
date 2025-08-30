@@ -45,23 +45,20 @@
 import { onMounted, reactive, ref } from 'vue';
 import { authStore } from '../../../stores/auth';
 import { Modal } from 'ant-design-vue';
+import { get, destroy } from '../../../services/userService';
 const auth = authStore();
 
 const users = ref([]);
 const renderUser = () => {
-    axios.get('http://127.0.0.1:8000/api/users', {
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${auth.token}`,
-        }
-    })
-        .then(function (response) {
+    get()
+        .then(response => {
             users.value = response.data;
         })
-        .catch(function (error) {
+        .catch(error => {
             console.log(error);
-        })
+        });
 }
+
 onMounted(() => {
     renderUser();
 })
@@ -83,16 +80,11 @@ const showDeleteConfirm = (id) => {
 };
 
 const deleteUser = (id) => {
-    axios.delete(`http://127.0.0.1:8000/api/users/${id}`, {
-        headers: {
-            'Authorization': `Bearer ${auth.token}`,
-        }
-    })
-        .then(function (response) {
-            console.log(response);
+    destroy(id)
+        .then(() => {
             renderUser();
         })
-        .catch(function (error) {
+        .catch((error) => {
             console.log(error);
         });
 }

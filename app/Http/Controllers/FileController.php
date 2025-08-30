@@ -24,7 +24,7 @@ class FileController extends Controller
 
         $downloadUrl = URL::temporarySignedRoute(
             'download.file',
-            now()->addMinutes(5),
+            now()->addMinutes(15),
             ['file_path' => $file_path]
         );
 
