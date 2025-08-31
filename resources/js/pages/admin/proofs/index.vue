@@ -18,17 +18,19 @@
                 </template>
 
                 <template v-if="column.key === 'status'">
-                    <span class="badge"
-                        :class="{ 'bg-info': record.status === 'pending', 'bg-success': record.status !== 'approved', 'bg-danger': record.status === 'rejected' }">
-                        {{ record.status === 'pending' ? 'Đang chờ' : record.status === 'approved' ? 'Đã duyệt' : 'Bị từ chối' }}
-                    </span>
+                    <span class="badge" :class="formatClassStatus(record.status)">{{ formatStatus(record.status) }}</span>
+                </template>
+
+                <template v-if="column.dataIndex === 'created_at'">
+                    {{ formatDate(record.created_at) }}
                 </template>
 
                 <template v-if="column.key === 'action'">
                     <div class="d-flex justify-content-around">
                         <router-link :to="{ name:'proof-show', params: { id: record.id } }">
                             <a-button type="primary" size="small" >
-                                <i class="fa-solid fa-magnifying-glass"></i>
+                                <i class="fa-solid fa-magnifying-glass me-1"></i>
+                                Chi tiết
                             </a-button>
                         </router-link>
                     </div>
@@ -41,6 +43,7 @@
 <script setup>
     import { onMounted, ref } from 'vue';
     import { get } from '../../../services/reviewService';
+    import { formatStatus, formatClassStatus, formatDate } from '../../../utils/format';
 
     const proofs = ref([]);
     onMounted(() => {
@@ -86,10 +89,17 @@
             align: 'center',
         },
         {
+            title: 'Ngày tạo',
+            dataIndex: 'created_at',
+            key: 'created_at',
+            width: 150,
+            align: 'center',
+        },
+        {
             title: 'Trạng thái',
             dataIndex: 'status',
             key: 'status',
-            width: 100,
+            width: 120,
             align: 'center',
         },
         {
@@ -104,6 +114,7 @@
             key: 'action',
             width: 100,
             align: 'center',
+            fixed: 'right',
         },
     ];
 

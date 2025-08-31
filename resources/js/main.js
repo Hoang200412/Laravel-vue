@@ -1,7 +1,7 @@
 import { createApp, markRaw } from "vue";
 import App from "./App.vue";
 import router from "./router/index.js";
-import { Drawer, List, Menu, Button, message, Table, Card, Avatar, Select, Input, Upload, Alert, Dropdown, Radio, Modal } from "ant-design-vue";
+import { Drawer, List, Menu, Button, message, Table, Card, Avatar, Select, Input, Upload, Alert, Dropdown, Radio, Space } from "ant-design-vue";
 import { createPinia } from "pinia";
 import axios from 'axios';
 
@@ -33,5 +33,6 @@ app.use(Upload);
 app.use(Alert);
 app.use(Dropdown);
 app.use(Radio);
+app.use(Space);
 app.mount("#app");
 app.config.globalProperties.$message = message;

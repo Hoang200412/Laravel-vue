@@ -17,7 +17,11 @@ export const edit = (id) => {
 }
 
 export const update = (id, data) => {
-    return api.put(`/api/users/${id}`, data);
+    return api.post(`/api/users/${id}`, data, {
+        headers: {
+            'X-HTTP-Method-Override': 'PUT'
+        }
+    });
 }
 
 export const destroy = (id) => {
