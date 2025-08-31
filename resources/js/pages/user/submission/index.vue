@@ -23,10 +23,7 @@
                 </template>
 
                 <template v-if="column.key === 'status'">
-                    <span class="badge"
-                        :class="{ 'bg-info': record.status === 'pending', 'bg-success': record.status !== 'approved', 'bg-danger': record.status === 'rejected' }">
-                        {{ record.status === 'pending' ? 'Đang chờ' : record.status === 'approved' ? 'Đã duyệt' : 'Bị từ chối' }}
-                    </span>
+                    <span class="badge" :class="formatClassStatus(record.status)">{{ formatStatus(record.status) }}</span>
                 </template>
 
                 <template v-if="column.dataIndex === 'created_at'">
@@ -53,7 +50,7 @@
 import { ref, onMounted } from 'vue';
 import { destroy, get, getSignedUrl } from '../../../services/proofService';
 import { useRouter } from 'vue-router';
-import { formatDate } from '../../../utils/format';
+import { formatDate, formatClassStatus, formatStatus } from '../../../utils/format';
 const proofs = ref([]);
 const fileUrl = ref('');
 const router = useRouter();
@@ -120,7 +117,9 @@ const columns = [
         title: 'Trạng thái',
         dataIndex: 'status',
         key: 'status',
-        width: 90
+        width: 120,
+        align: 'center',
+
     },
     {
         title: 'Ngày nộp',

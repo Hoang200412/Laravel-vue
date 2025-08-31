@@ -85,7 +85,7 @@ const getProofEdit = () => {
             formData.file_upload = response.data.file_path;
         })
         .catch((error) => {
-            notifyError(error);
+            notifyError(error.response.data.message);
         });
 }
 

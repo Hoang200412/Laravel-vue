@@ -19,12 +19,6 @@ const admin = [
                 meta: { auth: true, role: ["admin"] },
             },
             {
-                path: "settings",
-                name: "admin-settings",
-                component: () => import("../pages/admin/settings/index.vue"),
-                meta: { auth: true, role: ["admin"] },
-            },
-            {
                 path: "proofs",
                 name: "admin-proofs",
                 component: () => import("../pages/admin/proofs/index.vue"),

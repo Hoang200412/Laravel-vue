@@ -10,10 +10,6 @@
             <router-link :to="{ name: 'admin-users' }" class="text-decoration-none">Người dùng</router-link>
         </a-menu-item>
 
-        <a-menu-item key="admin-settings">
-            <router-link :to="{ name: 'admin-settings' }" class="text-decoration-none">Cài đặt</router-link>
-        </a-menu-item>
-
     </a-menu>
 
 </template>

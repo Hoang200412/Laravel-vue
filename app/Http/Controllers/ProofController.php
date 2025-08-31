@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Requests\ProofRequest;
 use Illuminate\Support\Facades\Date;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Routing\Controllers\HasMiddleware;
@@ -80,12 +81,14 @@ class ProofController extends Controller implements HasMiddleware
 
     public function edit(Proof $proof)
     {
+        Gate::authorize('edit', $proof);
         return response()->json($proof, 200);
     }
 
 
     public function update(ProofRequest $request, Proof $proof)
     {
+        Gate::authorize('update', $proof);
         try {
             DB::transaction(function () use ($request, $proof) {
                 $data = [
@@ -118,6 +121,7 @@ class ProofController extends Controller implements HasMiddleware
      */
     public function destroy(Proof $proof)
     {
+        Gate::authorize('delete', $proof);
         try {
             DB::transaction(function () use ($proof) {
                 if (Storage::disk('public')->exists($proof->file_path)) {

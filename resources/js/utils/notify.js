@@ -13,6 +13,6 @@ export const notifyError = (error) => {
         type: 'error',
         message: 'Thông báo',
         description:
-            error.message || 'Đã xảy ra lỗi',
+            error || 'Đã xảy ra lỗi',
     });
 };
