@@ -20,7 +20,6 @@ import { useRouter } from 'vue-router';
 
 const router = useRouter();
 const auth = authStore();
-const open_profile = ref(false);
 
 const user = ref({});
 

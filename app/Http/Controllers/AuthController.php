@@ -42,7 +42,10 @@ class AuthController extends Controller
             'email' => 'required|email|unique:users',
             'password' => 'required|min:6',
         ]);
+    }
 
+    public function getProfile() {
+        return response()->json(auth()->user(), 200);
     }
     
 }
